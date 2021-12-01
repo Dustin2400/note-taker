@@ -2,7 +2,12 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 let db = require('./db/db.json')
-let idCounter = db.at(-1).id;
+let idCounter 
+if (db[0]) {
+    idCounter = db.at(-1).id;
+} else {
+    idCounter = 0;
+}
 
 const PORT = process.env.PORT || 3001;
 const app = express();
