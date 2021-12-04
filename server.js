@@ -2,6 +2,8 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 let db = require('./db/db.json')
+
+// Makes sure there are no duplicate ids when creating new notes
 let idCounter 
 if (db[0]) {
     idCounter = db.at(-1).id;
@@ -16,18 +18,22 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static('public'));
 
+// Links to note taker page.
 app.get('/notes', (req, res) => {
     res.sendFile(path.join(__dirname, './public/notes.html'));
 });
 
+//Lists all notes.
 app.get('/api/notes', (req, res) => {
     res.json(db);
 });
 
+//Lets any misspelled get statement go to landing page.
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, './public/index.html'));
 });
 
+//posts notes to site.
 app.post('/api/notes', (req, res) => {
     idCounter ++;
     req.body.id = idCounter.toString();
@@ -51,6 +57,7 @@ app.post('/api/notes', (req, res) => {
     res.json(response);
 });
 
+//removes notes.
 app.delete('/api/notes/:id', (req, res) => {
     db = db.filter(note => note.id !== req.params.id);
     fs.writeFile(
